@@ -20,37 +20,50 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {  
-    res.send(JSON.stringify(books,null,4));
+    const promise = new Promise((resolve, reject) => {
+        resolve(res.send(JSON.stringify(books,null,4)));
+    });
+    promise.then(() => console.log("book promise resolved"));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-    const isbn = req.params.isbn;
-    res.send(books[isbn])
- });
+    const promise = new Promise((resolve, reject) => {
+        const isbn = req.params.isbn;
+        resolve(res.send(books[isbn]));
+    });
+    promise.then(() => console.log("isbn promise resolved"));
+});
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    let authorbooks = [];
-    let isbns = Object.keys(books);
-    isbns.forEach((isbn) => {
-        if(books[isbn]["author"] === req.params.author) {
-            authorbooks.push({"isbn":isbn, "title":books[isbn]["title"], "reviews":books[isbn]["reviews"]});
-        }
+    const promise = new Promise((resolve, reject) => {
+        let authorbooks = [];
+        let isbns = Object.keys(books);
+        isbns.forEach((isbn) => {
+            if(books[isbn]["author"] === req.params.author) {
+                authorbooks.push({"isbn":isbn, "title":books[isbn]["title"], "reviews":books[isbn]["reviews"]});
+            }
+        });
+
+        resolve(res.send(JSON.stringify({authorbooks}, null, 4)));
     });
-    res.send(JSON.stringify({authorbooks}, null, 4));
+    promise.then(() => console.log("author promise resolved"));
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    let titlebooks = [];
-    let isbns = Object.keys(books);
-    isbns.forEach((isbn) => {
-        if(books[isbn]["title"] === req.params.title) {
-            titlebooks.push({"isbn":isbn, "title":books[isbn]["title"], "reviews":books[isbn]["reviews"]});
-        }
+    const promise = new Promise((resolve, reject) => {
+        let titlebooks = [];
+        let isbns = Object.keys(books);
+        isbns.forEach((isbn) => {
+            if(books[isbn]["title"] === req.params.title) {
+                titlebooks.push({"isbn":isbn, "title":books[isbn]["title"], "reviews":books[isbn]["reviews"]});
+            }
+        });
+        resolve(res.send(JSON.stringify({titlebooks}, null, 4)));
     });
-    res.send(JSON.stringify({titlebooks}, null, 4));
+    promise.then(() => console.log("title promise resolved"));
 });
 
 //  Get book review
